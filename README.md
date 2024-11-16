@@ -1,6 +1,24 @@
-# Tutorial project for Django - AWS CI-CD CodePipeline workflow
+# ci-cd-configurations-files
 
-GitHub branch -> AWS CodePipeline -> AWS CodeDeploy -> AWS Elastic Compute Cloud
+## Commands: We have used in Our Video
 
-## Original How-To Guide
-[AWS CI-CD for your Django app with AWS CodePipeline](https://medium.com/clairvoyantblog/aws-ci-cd-for-your-django-app-with-aws-codepipeline-aafec23f9e55)
+
+$ wget https://Bucket-name.s3.Region-identifier.amazonaws.com/latest/install
+
+
+##### Next up, we need to change the permission on the install file we will get after running the command above.
+
+$ chmod +x ./install
+
+##### Finally, to install the codedeploy-agent, run this command:
+
+$ sudo ./install auto > /tmp/logfile
+
+###### Here we are logging the output of the installation to the /tmp/logfile file. To check if the codedeploy-agent is running, enter this command:
+$ sudo service codedeploy-agent status
+
+###### If it is not running, enter this command to start the codedeploy-agent service:
+
+$ sudo service codedeploy-agent status
+
+
