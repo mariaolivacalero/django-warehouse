@@ -31,4 +31,3 @@ sudo supervisorctl update
 sudo supervisorctl restart django_app
 
 # Exit successfully
-exit 0

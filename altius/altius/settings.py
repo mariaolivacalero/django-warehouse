@@ -11,9 +11,69 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+import os
+import boto3
+from botocore.exceptions import ClientError
+import json
+from django.core.exceptions import ImproperlyConfigured
+import environ
 
+env = environ.Env()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Take environment variables from .env file
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+
+def get_secret(secret_name):
+    region_name = "eu-west-1"  # replace with your AWS region
+    session = boto3.session.Session()
+    client = session.client(
+        service_name='secretsmanager',
+        region_name=region_name
+    )
+
+    try:
+        get_secret_value_response = client.get_secret_value(
+            SecretId=secret_name
+        )
+    except ClientError as e:
+        raise ImproperlyConfigured(f"Couldn't retrieve secret: {e}")
+    else:
+        if 'SecretString' in get_secret_value_response:
+            return json.loads(get_secret_value_response['SecretString'])
+        else:
+            raise ImproperlyConfigured("Secret not found in SecretString")
+
+ON_EC2 = env.bool('ON_EC2', default=True)
+
+if ON_EC2:
+    # We're on EC2, use Secrets Manager
+    secret_name = "rdsSourceSecretB68E2D93-ZZJrXoQ0kaWE"  # replace with your actual secret name
+    db_secrets = get_secret(secret_name)
+    
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': db_secrets['dbname'],
+            'USER': db_secrets['username'],
+            'PASSWORD': db_secrets['password'],
+            'HOST': db_secrets['host'],
+            'PORT': db_secrets['port'],
+        }
+    }
+else:
+    # We're running locally, use .env file
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': env('DB_NAME'),
+            'USER': env('DB_USER'),
+            'PASSWORD': env('DB_PASSWORD'),
+            'HOST': env('DB_HOST'),
+            'PORT': env('DB_PORT', default='5432'),
+        }
+    }
 
 
 # Quick-start development settings - unsuitable for production
@@ -72,13 +132,6 @@ WSGI_APPLICATION = 'altius.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
 
 
 # Password validation
