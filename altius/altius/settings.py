@@ -45,7 +45,7 @@ def get_secret(secret_name):
         else:
             raise ImproperlyConfigured("Secret not found in SecretString")
 
-ON_EC2 = env.bool('ON_EC2', default=False)
+ON_EC2 = env.bool('ON_EC2', default=True)
 
 if ON_EC2:
     # We're on EC2, use Secrets Manager
