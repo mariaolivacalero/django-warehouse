@@ -37,7 +37,7 @@ class Location(models.Model):
     name = models.CharField(max_length=255)
     type = models.CharField(
         max_length=50,
-        choices=[("warehouse", "Warehouse"), ("storefront", "Storefront")],
+        choices=[("warehouse", "Warehouse"), ("delivery", "Delivery")],
         default="warehouse",
     )
 

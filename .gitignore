@@ -4,6 +4,8 @@ venv/
 env/
 ENV/
 .env
+
+user_data.sh
 # Python
 __pycache__/
 *.py[cod]
