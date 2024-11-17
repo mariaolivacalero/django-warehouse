@@ -4,3 +4,4 @@ sqlparse==0.4.2
 boto3
 django-environ
 psycopg2-binary
+djangorestframework

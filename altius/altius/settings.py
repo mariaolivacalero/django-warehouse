@@ -18,6 +18,7 @@ import json
 from django.core.exceptions import ImproperlyConfigured
 import environ
 
+
 env = environ.Env()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -45,7 +46,12 @@ def get_secret(secret_name):
         else:
             raise ImproperlyConfigured("Secret not found in SecretString")
 
-ON_EC2 = env.bool('ON_EC2', default=True)
+# Database
+# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
+
+
+
+ON_EC2 = env.bool('ON_EC2', default=True) ## change locally to false, when releasing a change to cicd keep as true
 
 if ON_EC2:
     # We're on EC2, use Secrets Manager
@@ -93,7 +99,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'warehouse'
+    'warehouse',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
@@ -126,9 +133,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'altius.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 
 # Password validation
@@ -171,3 +175,13 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+}
