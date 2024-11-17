@@ -3,10 +3,6 @@
 # kill any servers that may be running in the background 
 sudo pkill -f runserver
 
-# kill frontend servers if you are deploying any frontend
-# sudo pkill -f tailwind
-# sudo pkill -f node
-
 sudo chmod -R 777 ./django-aws_cicd/
 
 cd /home/ubuntu/django-aws_cicd/
@@ -16,8 +12,23 @@ sudo python3 -m venv venv
 source venv/bin/activate
 
 pip install -r requirements.txt
-#pip install -r /home/ubuntu/django-aws_cicd/requirements.txt
 
-# run server
-cd altius
-python3 manage.py runserver 0:8000 
+# Create or overwrite the Supervisor configuration file
+sudo tee /etc/supervisor/conf.d/django_app.conf > /dev/null << EOL
+[program:django_app]
+command=/home/ubuntu/django-aws_cicd/venv/bin/python /home/ubuntu/django-aws_cicd/altius/manage.py runserver 0:8000
+directory=/home/ubuntu/django-aws_cicd/altius
+user=ubuntu
+autostart=true
+autorestart=true
+stderr_logfile=/var/log/django_app.err.log
+stdout_logfile=/var/log/django_app.out.log
+EOL
+
+# Reload Supervisor configuration and restart the app
+sudo supervisorctl reread
+sudo supervisorctl update
+sudo supervisorctl restart django_app
+
+# Exit successfully
+exit 0

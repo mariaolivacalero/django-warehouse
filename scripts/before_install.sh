@@ -15,7 +15,11 @@ sudo ./install auto
 # update os & install python3
 sudo apt-get update
 sudo apt-get install -y python3 python3-dev python3-pip python3-venv
+sudo apt-get install supervisor
 sudo apt-get install virtualenv
 
 # delete app
 sudo rm -rf /home/ubuntu/django-aws_cicd
+
+sudo systemctl enable supervisor
+sudo systemctl start supervisor
