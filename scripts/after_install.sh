@@ -27,11 +27,14 @@ stdout_logfile=/var/log/django_app.out.log
 EOL
 
 # set environment variable onEc2 to true
-sudo echo "export ON_EC2=true" >> /home/ubuntu/.bashrc
+export ON_EC2=true
+
+echo "export ON_EC2=true" | sudo tee -a /etc/environment
 
 cd altius
 python manage.py makemigrations
 python manage.py migrate
+
 
 # Reload Supervisor configuration and restart the app
 sudo supervisorctl reread
