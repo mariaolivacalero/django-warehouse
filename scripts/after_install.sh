@@ -13,6 +13,7 @@ source venv/bin/activate
 
 pip install -r requirements.txt
 
+
 # Create or overwrite the Supervisor configuration file
 sudo tee /etc/supervisor/conf.d/django_app.conf > /dev/null << EOL
 [program:django_app]
@@ -24,6 +25,13 @@ autorestart=true
 stderr_logfile=/var/log/django_app.err.log
 stdout_logfile=/var/log/django_app.out.log
 EOL
+
+# set environment variable onEc2 to true
+sudo echo "export ON_EC2=true" >> /home/ubuntu/.bashrc
+
+cd altius
+python manage.py makemigrations
+python manage.py migrate
 
 # Reload Supervisor configuration and restart the app
 sudo supervisorctl reread
